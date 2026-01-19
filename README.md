@@ -1,35 +1,42 @@
 # 🐍 Automation with Python
 
 ## 📌 Overview
-This repository contains practical Python scripts focused on automating
-common tasks, improving productivity and solving real-world problems.
+This repository contains practical Python automation scripts designed to
+solve real-world problems and improve productivity.
 
-The goal is to apply Python in a clear, simple and effective way,
-with clean code and proper documentation.
+The focus is on clean code, simple structure and clear documentation,
+making each script easy to understand and reuse.
 
 ---
 
 ## 🎯 Objectives
 - Automate repetitive or manual tasks
-- Improve productivity using Python
+- Apply Python to real use cases
 - Practice clean, readable and maintainable code
-- Apply programming concepts to real use cases
+- Improve productivity through automation
 
 ---
 
 ## 🧰 Technologies
 - Python 3
+- Standard Library (pathlib, os)
 
 ---
 
 ## 📂 Repository Structure
-Each script is organized in a simple structure and includes
-comments and documentation explaining its purpose and usage.
+
+automation-with-python/
+- scripts/
+  - organize_files.py
+  - rename_extensions.py
+- README.md
 
 ---
 
 ## 🚀 Getting Started
+
+Clone the repository using SSH:
+
 ```bash
 git clone git@github.com:fsilva-it/automation-with-python.git
 cd automation-with-python
-python script_name.py
