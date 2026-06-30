@@ -1,0 +1,7 @@
+# Dependencias do harness whatsapp_qa.
+# O provider 'mock' e a avaliacao por palavra-chave/exato funcionam SEM nada disto
+# (apenas biblioteca padrao). Instale conforme o que for usar:
+
+pyyaml>=6.0        # checklists em YAML (JSON funciona sem isto)
+requests>=2.31     # providers 'cloud' (Meta) e 'twilio'
+anthropic>=0.40    # avaliacao de resposta por IA (grader 'ai'/'hybrid')
