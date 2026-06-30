@@ -72,6 +72,17 @@ Valide o arquivo sem enviar nada:
 python -m whatsapp_qa validate --checklist checklists/exemplo.yaml
 ```
 
+### Checklist real do 1º RCPN-RJ
+
+`checklists/1rcpn_respostas.yaml` foi gerado a partir do documento oficial
+*RESPOSTAS PADRONIZADAS — OFICIAL (rev. 2)*: 55 casos, cada um com a pergunta do
+cliente e a resposta esperada fiel a fonte, avaliados por IA (`grader: ai`).
+
+```bash
+ANTHROPIC_API_KEY=... WAQA_PROVIDER=cloud WAQA_TARGET_NUMBER=552133861504 \
+python -m whatsapp_qa run --checklist checklists/1rcpn_respostas.yaml --format md --out relatorio.md
+```
+
 ## Avaliacao (grader)
 
 - `keyword` - aprova se todas as palavras-chave aparecem (deterministico, sem custo)

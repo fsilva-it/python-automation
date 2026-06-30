@@ -1,0 +1,476 @@
+# Checklist gerado de PR_1RCPNRJ_RespostasPadronizadas_rev2.docx
+# 55 itens. Cada caso: pergunta do cliente (send) + resposta esperada fiel a fonte (expect).
+# Avaliacao por IA (grader: ai) - requer ANTHROPIC_API_KEY. Ajuste criterios conforme necessario.
+
+- id: 2VIA-01
+  category: 2ª via de certidão (acervo próprio)
+  send: Como peço a 2ª via de uma certidão registrada no cartório de vocês e quanto custa?
+  expect: 'Para pedidos de certidão do 1º RCPN-RJ, acesse nosso site no link de “realizar pedido”. Valores:
+    2ª via em formato padrão/breve relato [valor conforme tabela de emolumentos vigente]; inteiro teor
+    digitada [valor conforme tabela de emolumentos vigente]; inteiro teor reprográfica [valor conforme
+    tabela de emolumentos vigente]. Prazo: 05 dias úteis para cada formato. Pagamento por dinheiro, PIX,
+    cartão de crédito ou débito.'
+  grader: ai
+- id: 2VIA-02
+  category: 2ª via de certidão (acervo próprio)
+  send: Qual a diferença entre breve relato, inteiro teor digitada e inteiro teor reprográfica?
+  expect: 'Breve relato contém as informações básicas (data de nascimento por extenso; hora e local; filiação;
+    nome dos avós; data do registro; nº da DNV). Inteiro teor digitada: todas as informações do livro
+    são digitadas. Inteiro teor reprográfica: fotocópia direta do livro. Nos dois formatos de inteiro
+    teor, havendo impedimento verificado no livro após o pedido, poderá ser solicitada autorização do
+    juiz para emissão.'
+  grader: ai
+- id: 2VIA-03
+  category: 2ª via de certidão (acervo próprio)
+  send: Posso receber a certidão em formato eletrônico? O valor muda?
+  expect: A certidão eletrônica/digital tem o mesmo valor de emolumentos do formato solicitado (breve
+    relato ou inteiro teor). Para pedido eletrônico, informe essa opção no campo de observações e selecione
+    a opção “balcão” na forma de retirada (o endereço é obrigatório para cadastro; caso contrário o sistema
+    calcula postagem pelo CEP). A certidão eletrônica possui validade de 90 dias, conforme as normas vigentes,
+    e o envio se dá por WhatsApp ou e-mail.
+  grader: ai
+- id: ITEOR-01
+  category: Inteiro teor — requisitos de assinatura
+  send: Para a certidão de inteiro teor, como devo assinar o requerimento?
+  expect: Conforme o Art. 117 do CNJ/RJ, o requerimento deve ser assinado com firma reconhecida por autenticidade
+    ou com assinatura digital nos padrões ICP-Brasil/gov.br. Anexe também cópia do documento de identificação.
+    O passo a passo da assinatura digital está disponível em nosso site. Havendo impedimento, conforme
+    o Art. 19, §3º da Lei 6.015/73, o pedido poderá ser encaminhado ao juiz para análise.
+  grader: ai
+- id: OUTRC-01
+  category: 2ª via de outros cartórios (CRC)
+  send: Vocês emitem certidão de registro feito em outro cartório?
+  expect: 'Sim, conseguimos emitir certidão de outros cartórios de registro civil pelo nosso site. O valor
+    de materialização da certidão é [valor conforme tabela de emolumentos vigente]. O valor do cartório
+    de origem segue a tabela de emolumentos de cada estado cadastrada no CRC Nacional, podendo sofrer
+    alteração; assim, o valor total gerado no pedido (depósito prévio) poderá precisar ser complementado.
+    Ao final do pedido você recebe por e-mail o link para pagamento. Prazo: em média, 10 dias úteis.'
+  grader: ai
+- id: OUTRC-02
+  category: Pedido CRC tratado como próprio
+  send: Pedi a certidão como se fosse de vocês, mas o registro não é do acervo de vocês. E agora?
+  expect: 'O registro solicitado não pertence ao nosso acervo. Para prosseguir pelos cartórios interligados,
+    é necessário pagar a taxa de materialização de [valor conforme tabela de emolumentos vigente] e preencher
+    os requerimentos em anexo, além de enviar cópia do documento de identificação do requerente. Prazo
+    estimado: 10 dias úteis. O valor do cartório de origem segue a tabela de emolumentos do estado no
+    CRC Nacional, podendo ocorrer alteração; o valor total (depósito prévio) poderá precisar ser complementado.
+    Chave PIX para a taxa: 21967261504. Envie o comprovante por e-mail mencionando o número do pedido.'
+  grader: ai
+- id: BUSCA-01
+  category: Solicitação de busca
+  send: Não tenho os dados do registro (livro, folha e termo). Como faço?
+  expect: Na ausência de livro, folha e termo, é necessário solicitar a busca em nosso acervo, pelos links
+    específicos de nascimento, casamento ou óbito em nosso site. O procedimento gera um número de protocolo
+    para acompanhamento. O valor da busca é [valor conforme tabela de emolumentos vigente]. Cada cartório
+    realiza buscas exclusivamente em seu próprio acervo. Em caso de resultado negativo, não há devolução
+    de valores, pois o serviço terá sido prestado.
+  grader: ai
+- id: BUSCA-02
+  category: Solicitação de busca
+  send: Como sei em qual cartório meu registro foi feito?
+  expect: 'Nascimento: no Registro Civil do local do nascimento da criança ou do bairro de residência
+    da mãe. Casamento: no Registro Civil do bairro de residência de um dos nubentes (no município do Rio,
+    o 5º e o 6º Distribuidores fazem busca prévia em todos os cartórios da capital). Óbito: no Registro
+    Civil do bairro do falecimento ou do endereço do obituado.'
+  grader: ai
+- id: BUSCA-03
+  category: Busca com certidão anexada
+  send: Anexei uma certidão ao pedido de busca. O que acontece?
+  expect: Se o registro pertencer ao nosso acervo, não será necessário realizar a busca; basta preencher
+    o “Requerimento de Certidão” em anexo e informar o formato desejado para cálculo da diferença, já
+    com o desconto da busca previamente quitada. Se o registro não pertencer ao nosso acervo, para emitir
+    a 2ª via atualizada pelos cartórios interligados é necessário preencher o formulário em anexo; o valor
+    será recalculado e o prazo é de 10 dias úteis após a confirmação do pagamento.
+  grader: ai
+- id: BUSCA-04
+  category: 2ª via sem dados do registro
+  send: Paguei a 2ª via mas não informei livro, folha e termo. Como prosseguir?
+  expect: Como os dados de livro, folha e termo não foram informados, podemos realizar a busca em nosso
+    acervo, descontando do valor já pago o montante de [valor conforme tabela de emolumentos vigente]
+    referente ao serviço de busca. Localizado o registro, será necessário complementar o valor para a
+    emissão da certidão. Aguardamos seu retorno para iniciar a busca.
+  grader: ai
+- id: APOST-01
+  category: Apostilamento (Haia)
+  send: O que é apostilamento e quanto custa?
+  expect: 'O apostilamento é o ato de certificação formal que atesta a autenticidade da origem de um documento
+    público para que tenha validade em países signatários da Convenção da Apostila da Haia. Valor: [valor
+    conforme tabela de emolumentos vigente]. Pagamento por dinheiro, PIX, cartão de crédito ou débito.
+    Retirada na Sede (Ilha do Governador) ou no Posto (Centro).'
+  grader: ai
+- id: ENVIO-01
+  category: Envio por AR/Sedex
+  send: Quais as opções e valores de envio pelos Correios?
+  expect: 'AR (Aviso de Recebimento): [valor conforme tabela de emolumentos vigente] — sem acompanhamento
+    do andamento do envio. Sedex: [valor conforme tabela de emolumentos vigente]. A responsabilidade pelo
+    transporte, prazo de entrega e integridade do envio é exclusivamente da empresa de postagem. O valor
+    deve ser depositado na quantia exata (sem arredondamentos) e identificado. PIX: 21967261504 (1º RCPN).
+    Envie o comprovante por e-mail com menção ao pedido.'
+  grader: ai
+- id: ENVIO-02
+  category: Envio por motoboy
+  send: Tem entrega mais rápida que os Correios?
+  expect: 'Sim. Para maior urgência, sugerimos a entrega por motoboy. O valor é calculado posteriormente
+    e encaminhado ao seu e-mail. Tempo de espera do motoboy: 15 minutos em cada local; a partir disso
+    o sistema calcula [valor conforme tabela de emolumentos vigente] por minuto excedente. O valor deve
+    ser depositado na quantia exata e identificado, via PIX 21967261504 (1º RCPN), com envio do comprovante
+    por e-mail.'
+  grader: ai
+- id: ENVIO-03
+  category: Devolução pelos Correios
+  send: Minha certidão voltou pelos Correios. O que fazer?
+  expect: Recebemos a devolução do documento pelos Correios. Por favor, informe o endereço correto para
+    calcularmos o valor da nova postagem. Alternativamente, a certidão pode ser retirada na unidade da
+    Ilha do Governador (Praia da Olaria, 155 – Cocotá), de segunda a sexta, das 9h às 17h.
+  grader: ai
+- id: ELET-01
+  category: Certidão eletrônica x física (PDF)
+  send: Recebi um PDF da certidão. É a certidão eletrônica?
+  expect: 'Não. Trata-se de certidão física: o PDF é apenas uma digitalização da certidão original. A
+    certidão física está disponível para retirada no balcão ou pode ser enviada por Sedex/AR, mediante
+    pagamento da taxa dos Correios.'
+  grader: ai
+- id: ELET-02
+  category: Alteração para certidão eletrônica
+  send: Pedi a certidão física, mas quero mudar para eletrônica. É possível?
+  expect: Sim. Confirmada a alteração para o formato eletrônico, esta passa a ser a única forma de envio,
+    e a certidão eletrônica tem validade de 90 dias. Informe a preferência de recebimento (WhatsApp ou
+    e-mail) e confirme seus dados para evitar falhas no envio. Para reembolso do valor pago pelo envio
+    (Correios), será necessário preencher o requerimento anexo.
+  grader: ai
+- id: TROCA-01
+  category: Troca de certidão (erro material)
+  send: Minha certidão veio com erro. Como corrigir?
+  expect: 'Verificado erro material, providenciaremos a via corrigida. Para isso, encaminhe a certidão
+    riscada (frente e verso); recebida, emitiremos a via corrigida. Opções de recebimento: correspondência
+    (informe endereço e destinatário), formato eletrônico por e-mail, ou retirada presencial. No envio
+    eletrônico, havendo sinal público no pedido, esse valor é devolvido, pois o serviço só é possível
+    na certidão física.'
+  grader: ai
+- id: DEVRC-01
+  category: Devolução do pedido ao cartório
+  send: Como devolvo um pedido de certidão ao cartório pelo site do Registro Civil?
+  expect: Acesse www.registrocivil.org.br, clique em “Entrar” e faça login com CPF e senha. No canto superior
+    direito, clique no seu nome e selecione “Meus pedidos”; localize o pedido e clique em “Devolver para
+    o cartório”, seguindo as orientações da tela. Descreva de forma clara e objetiva o erro identificado,
+    pois isso é essencial para a análise e eventuais correções.
+  grader: ai
+- id: CASA-01
+  category: Habilitação de casamento (brasileiros)
+  send: Quero casar no civil. Quais os valores e como dou entrada?
+  expect: 'Segue o checklist dos documentos para a habilitação. Você pode agendar dia e hora pelo nosso
+    pré-registro. Valores: Casamento (civil ou religioso) [valor conforme tabela de emolumentos vigente];
+    Conversão de União Estável [valor conforme tabela de emolumentos vigente]; Conversão de União Estável
+    + Registro [valor conforme tabela de emolumentos vigente]. Pagamento por dinheiro, PIX, cartão de
+    crédito ou débito. O protocolo de entrada é feito exclusivamente na Sede (Praia da Olaria, 155, Cocotá
+    – Ilha do Governador), das 09h às 17h.'
+  grader: ai
+- id: CASA-02
+  category: Habilitação de casamento (brasileiros)
+  send: Quanto tempo demora o processo e por quanto tempo vale a habilitação?
+  expect: O processo leva 5 dias úteis, caso a documentação esteja correta e sem exigências. A validade
+    do processo é de 90 dias para casar, a partir da data de entrada (no civil ou no religioso). As celebrações
+    são realizadas às quintas-feiras, conforme disponibilidade de datas e horários da agenda, respeitando
+    o prazo legal.
+  grader: ai
+- id: CASA-03
+  category: Habilitação de casamento (brasileiros)
+  send: Já temos união estável. Qual o valor para converter em casamento e há diferença com registro?
+  expect: 'Conversão de União Estável: [valor conforme tabela de emolumentos vigente]. Conversão de União
+    Estável + Registro: [valor conforme tabela de emolumentos vigente]. O protocolo de entrada é exclusivamente
+    na Sede; prazo do processo de 5 dias úteis caso não haja exigências. Pagamento por dinheiro, PIX,
+    cartão de crédito ou débito.'
+  grader: ai
+- id: UE-01
+  category: Registro de união estável
+  send: Como registro minha união estável com vocês?
+  expect: Você pode dar entrada pelo nosso site ou comparecer a uma de nossas unidades (Sede – Ilha do
+    Governador, ou Posto – Centro). O pedido é recebido pelo site, a documentação é analisada pelo setor
+    responsável e entramos em contato em até 2 dias úteis pelo e-mail cadastrado. Segue a documentação
+    necessária em anexo.
+  grader: ai
+- id: UE-02
+  category: Termo declaratório de união estável
+  send: Qual o valor e como funciona o termo declaratório de união estável?
+  expect: 'Ambos devem comparecer presencialmente a uma de nossas unidades (Sede ou Posto). Segue a documentação
+    necessária em anexo. Valor: [valor conforme tabela de emolumentos vigente] (Termo Declaratório e Registro
+    no Livro E). Prazo: 5 dias úteis. Pagamento por dinheiro, PIX, cartão de crédito ou débito.'
+  grader: ai
+- id: SENT-01
+  category: Registro de sentença
+  send: Quero registrar uma sentença e averbar o divórcio. Quais os valores?
+  expect: 'Você pode dar entrada pelo site ou em uma de nossas unidades; a documentação é analisada pelo
+    setor responsável e entramos em contato em até 2 dias úteis. Valores: Registro da Sentença [valor
+    conforme tabela de emolumentos vigente]; Taxa de Materialização [valor conforme tabela de emolumentos
+    vigente] (não abrangida pela gratuidade de justiça); Averbação do Divórcio no RJ [valor conforme tabela
+    de emolumentos vigente]; Averbação em outro Estado a calcular; 2ª via da certidão a calcular. Para
+    averbar o divórcio e emitir a certidão averbada via CRC Nacional, mencione a solicitação no campo
+    de observações do pedido.'
+  grader: ai
+- id: INTER-01
+  category: Interdição e curatela
+  send: Como registro uma interdição/curatela?
+  expect: 'A interdição/curatela é medida de amparo para quem não tem capacidade de praticar atos da vida
+    civil. O registro é no Livro E do 1º RCPN; após o ato, comunica-se para anotação nos assentos da pessoa
+    interditada, via Central de Interligação de Cartórios. Os atos de substituição de curador, prorrogação,
+    curatela definitiva e levantamento da interdição devem ser averbados no registro da curatela. A solicitação
+    não pode ser feita online; é presencial (Sede ou Posto). Prazo: 05 dias úteis.'
+  grader: ai
+- id: ADOC-01
+  category: Adoção
+  send: Tenho sentença de adoção. Como registro?
+  expect: 'A sentença de adoção é registrada no Livro E do 1º RCPN; após o registro, a comunicação é feita
+    pela Central de Interligação de Cartórios para as anotações e averbações cabíveis. A solicitação não
+    pode ser feita online; é presencial (Sede ou Posto). Prazo: 05 dias úteis. Segue a documentação em
+    anexo.'
+  grader: ai
+- id: EMANC-01
+  category: Emancipação
+  send: Como funciona o registro de emancipação?
+  expect: 'A emancipação antecipa a capacidade civil. Pode ser por escritura pública ou sentença judicial,
+    mas precisa ser registrada no Livro E do 1º RCPN para produzir efeitos perante o Estado e terceiros;
+    depois, comunica-se via Central de Interligação para anotação no assento de nascimento. Solicitação
+    não pode ser feita online (presencial – Sede ou Posto). Prazo: 05 dias úteis. O emancipado deve residir
+    no Município do Rio de Janeiro. Por escritura pública, só se admitem escrituras lavradas em Cartórios
+    de Notas de numeração ímpar; caso contrário, o registro não é de competência desta serventia.'
+  grader: ai
+- id: NOME-01
+  category: Alteração de prenome (Art. 56)
+  send: Quero alterar meu prenome. Qual o valor e o prazo?
+  expect: 'Segue a documentação em anexo. A documentação deve ser apresentada em uma de nossas unidades
+    ou encaminhada pelo cartório mais próximo via CRC. Valor: [valor conforme tabela de emolumentos vigente]
+    (tabela vigente 2026). Prazo: 30 dias.'
+  grader: ai
+- id: NOME-02
+  category: Alteração de sobrenome (Art. 57)
+  send: E para alterar o sobrenome, qual o valor e o prazo?
+  expect: 'Segue a documentação em anexo, a ser apresentada em uma de nossas unidades ou encaminhada pelo
+    cartório mais próximo via CRC. Valor: [valor conforme tabela de emolumentos vigente] (tabela vigente
+    2026). Prazo: 30 dias.'
+  grader: ai
+- id: NOME-03
+  category: Nome do genitor por mudança de estado civil
+  send: Minha mãe/pai mudou de nome ao casar/divorciar. Como atualizo isso no meu registro?
+  expect: 'Segue a documentação em anexo, a ser apresentada em uma de nossas unidades ou encaminhada pelo
+    cartório mais próximo via CRC. Prazo: 30 dias úteis, sujeito a alteração conforme cumprimento de exigências
+    e eventual envio ao Juízo/MP. Pagamento por dinheiro, PIX, cartão de crédito ou débito.'
+  grader: ai
+- id: RETIF-01
+  category: Retificação (Arts. 109 e 110)
+  send: Disseram que preciso retificar o registro antes da certidão. Como faço?
+  expect: 'Verificamos que é necessária retificação para emitir a certidão como desejado. Segue a documentação
+    em anexo. A documentação deve ser apresentada em uma de nossas unidades ou encaminhada pelo cartório
+    mais próximo via CRC. Prazo: 30 dias.'
+  grader: ai
+- id: TRANS-01
+  category: Transcrição de casamento/nascimento/óbito
+  send: Casamento/nascimento/óbito ocorreu no exterior. Como faço a transcrição?
+  expect: 'Segue a documentação necessária para o processo de transcrição em anexo, a ser entregue na
+    Sede ou no Posto. Prazo: 5 a 10 dias úteis.'
+  grader: ai
+- id: AVDIV-01
+  category: Averbação de divórcio estrangeiro
+  send: Me divorciei no exterior. Preciso homologar no STJ para averbar?
+  expect: 'Conforme o Provimento CNJ nº 53/2016, segue a documentação em anexo. Em divórcio consensual,
+    mesmo qualificado, o registro pode ser feito independentemente de homologação pelo STJ, nos termos
+    do art. 858, §§ 1º e 2º, do CGJ/RJ. Se a sentença mencionar filhos menores, deverá ser previamente
+    homologada no STJ. Porém, se no momento do pedido todos os filhos já forem maiores e capazes, a averbação
+    direta poderá ser feita mediante prova inequívoca da maioridade e capacidade. Documentação do STJ:
+    carta de sentença com senha de acesso e cópia da certidão de casamento (transcrição ou casamento no
+    Brasil). Prazo: 20 dias, com toda a documentação apresentada.'
+  grader: ai
+- id: REGB-01
+  category: Inclusão de regime de bens (transcrição)
+  send: Minha transcrição de casamento não trouxe o regime de bens. Posso incluir depois?
+  expect: 'Sim. Conforme o art. 13, §3º da Resolução CNJ nº 155/2012 (red. Res. 583/2024), faculta-se
+    a averbação posterior do regime de bens, sem autorização judicial, mediante documentação comprobatória,
+    indicando o país cuja legislação se aplica e o respectivo nomen juris. A averbação complementar exige
+    ao menos um dos documentos previstos (ex.: requerimento de retificação assinado pelos cônjuges; certidão
+    de transcrição; certificação por advogados do país aplicável; declaração consular; apresentação da
+    lei aplicável traduzida). Quando a lei estrangeira remeter à legislação brasileira ou não estabelecer
+    regime, aplicam-se os arts. 1.640 e 1.641 do Código Civil, observado o procedimento dos §§3º-A e 3º-B.
+    Deve constar a anotação: “Aplica-se o disposto no art. 7º, §4º, do Decreto-Lei nº 4.657/1942”.'
+  grader: ai
+- id: SOCIO-01
+  category: Reconhecimento socioafetivo
+  send: Como dou entrada no reconhecimento socioafetivo?
+  expect: 'Segue a documentação em anexo. O processo só pode ser feito se o pretenso filho for maior de
+    12 anos, e ele deve comparecer para o protocolo acompanhado dos responsáveis legais. A documentação
+    deve ser apresentada em uma de nossas unidades ou encaminhada pelo cartório mais próximo via CRC.
+    Prazo: 30 dias.'
+  grader: ai
+- id: BIOL-01
+  category: Reconhecimento paterno/materno biológico
+  send: Quero reconhecer meu filho biológico. Há custo?
+  expect: 'Segue a documentação em anexo, a ser entregue na Sede ou no Posto. Em caso de reconhecimento
+    de registrado menor de idade, o procedimento é gratuito (JG). Prazo: 30 dias úteis, sujeito a alteração
+    conforme cumprimento de exigências e eventual envio ao Juízo/MP.'
+  grader: ai
+- id: IMPED-01
+  category: Impedimento (inteiro teor)
+  send: Pedi inteiro teor e disseram que há impedimento. Qual o procedimento?
+  expect: 'Consta no registro causa de impedimento à emissão direta, conforme art. 19, §3º, da Lei de
+    Registros Públicos. O requerimento (F-039) deve ser assinado com firma reconhecida ou assinatura digital
+    ICP-Brasil/gov.br. Se for o próprio registrado/nubente: F-039 + documento de identificação com foto.
+    Se for legitimado em linha reta com registrado falecido: F-039 + documento do requerente + certidão
+    que comprove a legitimidade. Se for terceiro sem legitimidade ou registrado não falecido: F-039 +
+    procuração com poderes específicos e firma reconhecida + documento do requerente. Prazo estimado:
+    25 dias após o protocolo. A documentação original deve ser enviada por correio, com firma reconhecida
+    por autenticidade, à Praia da Olaria, 155 – Cocotá, aos cuidados do setor de processo.'
+  grader: ai
+- id: NAC-01
+  category: Opção de nacionalidade
+  send: Meu registro consta como provisório. Por que não sai a certidão?
+  expect: O registro consta como “provisório”, feito com base em certidão emitida por autoridade estrangeira.
+    Antes da emissão, o registrado deve providenciar a Opção de Nacionalidade junto à Justiça Federal.
+    Se já realizou o procedimento, encaminhe o respectivo registro para anotação, nos termos do art. 914,
+    parágrafo único, da Consolidação Normativa do RJ. Caso tenha certidão emitida por autoridade consular
+    do país de nascimento, encaminhe-a para análise.
+  grader: ai
+- id: NAT-01
+  category: Inclusão de naturalidade
+  send: Minha certidão está sem naturalidade. Como incluo?
+  expect: 'A naturalidade precisa constar de forma completa (município e estado de nascimento). Para incluir,
+    inicia-se processo específico de retificação: pelas próprias partes via autodeclaração (formulário
+    F-049); por terceiro, com documentação comprobatória e procuração, conforme checklist. Encaminhe o
+    F-049 preenchido e assinado eletronicamente (gov.br) para atendimento@1rcpn.com.br, informando o número
+    da solicitação. Prazo: em média 30 dias. Se preferir a certidão sem a naturalidade, envie o formulário
+    F-044; ressalvado que a ausência pode gerar recusa por algum órgão, conforme a finalidade.'
+  grader: ai
+- id: RGCIN-01
+  category: 2ª via RG e CIN
+  send: Vocês fazem 2ª via de RG/CIN? Quais valores e prazo?
+  expect: 'Qualquer pessoa pode solicitar a 2ª via conosco, desde que a 1ª via tenha sido emitida no Rio
+    de Janeiro. Para menores de 16 anos, o responsável legal deve comparecer junto ao menor para protocolar
+    e retirar. Disponível o novo modelo CIN; se for a primeira via desse modelo, não há pagamento da taxa
+    do DUDA, apenas a taxa de conveniência do cartório. Valores: DUDA [valor conforme tabela de emolumentos
+    vigente]; Taxa de Conveniência [valor conforme tabela de emolumentos vigente]. Prazo: 10 a 15 dias
+    úteis, sujeito a alteração conforme consultas do Detran e exigências. Segue a documentação em anexo.'
+  grader: ai
+- id: CNH-01
+  category: 2ª via CNH (parceria Detran/RJ)
+  send: Quais serviços de CNH vocês fazem e quanto custa?
+  expect: 'Temos parceria com o Detran/RJ para: 1ª ou 2ª via da CNH, mudança de provisória para definitiva,
+    renovação, adição de categoria e alteração de atividade remunerada. A taxa de conveniência do cartório
+    ([valor conforme tabela de emolumentos vigente]) é paga no atendimento; o DUDA já está pago e compensado.
+    Para categorias C, D e E, é necessário exame toxicológico com validade vigente. Prazo: 10 a 15 dias
+    úteis, sujeito a exigências. Segue a documentação em anexo.'
+  grader: ai
+- id: CPF-01
+  category: CPF (convênio RFB)
+  send: Vocês fazem CPF? Dá para alterar dados do CPF?
+  expect: 'O convênio ampliado entre a Receita Federal e os Cartórios de Registro Civil permite serviços
+    de CPF: inscrição, consulta e emissão de 2ª via, conforme a Lei Federal nº 13.484/17. Atenção: não
+    realizamos alterações de dados no CPF.'
+  grader: ai
+- id: RFB-01
+  category: Procuração Digital RFB (e-CAC)
+  send: Não tenho certificado digital. Como faço a procuração para o e-CAC?
+  expect: 'O acordo entre a Receita Federal e o CRC Nacional permite que os cartórios prestem serviços
+    de procuração RFB para uso do Portal e-CAC: quem não possui certificado digital pode outorgar poderes
+    a alguém que já o tenha, pelo site do Registro Civil. Compareça presencialmente a uma de nossas unidades
+    com a procuração e os documentos pertinentes. Valor da taxa: [valor conforme tabela de emolumentos
+    vigente]. Prazo: normalmente 05 dias úteis após o envio da documentação para validação, feita exclusivamente
+    no site da Receita Federal.'
+  grader: ai
+- id: NEG-01
+  category: Certidão negativa
+  send: Como solicito uma certidão negativa e qual o valor?
+  expect: 'Acesse o link registrocivil.net/88708 e preencha o formulário com as informações solicitadas.
+    Valor: [valor conforme tabela de emolumentos vigente]. Disponível também em formato digital: recebimento
+    por e-mail (PDF) ou retirada presencial no endereço do Centro. Pela plataforma do site, com cadastro,
+    é possível acompanhar o status do pedido e baixar recibo e certidão quando disponíveis.'
+  grader: ai
+- id: NEGB-01
+  category: Certidão negativa de busca
+  send: Preciso de uma certidão negativa de busca. Como faço?
+  expect: 'Envie o documento anexo preenchido e assinado, indicando o motivo (finalidade) da solicitação.
+    Informe a forma de recebimento: retirada presencial (Ilha do Governador ou Centro) ou envio pelos
+    Correios (informando o endereço completo). Após o recebimento dessas informações, encaminharemos os
+    valores e os dados bancários para o pagamento.'
+  grader: ai
+- id: GRAT-01
+  category: Gratuidade
+  send: Tenho direito à gratuidade. Como solicito?
+  expect: Se o registro estiver em nosso acervo, compareça a uma de nossas unidades com documento de identificação
+    e os dados do registro para formalizar o pedido. Será necessário preencher a Declaração de Hipossuficiência,
+    submetida à análise do setor competente; havendo dúvida quanto ao deferimento, o pedido pode ser encaminhado
+    ao juízo competente. Após a abertura, são fornecidos login e senha para acompanhamento pelo site.
+    A apresentação de documentos de renda/despesa é facultativa.
+  grader: ai
+- id: GRAT-02
+  category: Gratuidade via e-mail
+  send: Posso pedir a gratuidade por e-mail, sem ir ao cartório?
+  expect: 'Para gratuidade por e-mail, envie: Declaração de Hipossuficiência com firma reconhecida por
+    autenticidade ou assinatura digital ICP-Brasil/gov.br; documento de identificação; comprovação de
+    legitimidade; e formulário de esclarecimento (também com firma reconhecida ou assinatura digital)
+    informando o motivo do pedido por e-mail e a impossibilidade de comparecimento. Após o recebimento,
+    o pedido segue para análise do setor competente. Deferido o pedido: a gratuidade não se estende aos
+    serviços postais (Código de Normas da CGJ/RJ); o custo do envio físico (SEDEX) é de responsabilidade
+    do requerente, ou a certidão pode ser enviada em formato eletrônico, sem via física.'
+  grader: ai
+- id: TEMP-01
+  category: Tabela de temporalidade
+  send: Vocês ainda guardam os documentos que foram usados no meu registro antigo?
+  expect: Conforme o Provimento nº 50, de 28/09/2015 (CGJ/RJ), que regulamenta a Tabela de Temporalidade,
+    os documentos apresentados para nascimento, casamento e óbito são mantidos por 5 anos e depois descartados.
+    Transcorrido o prazo, são eliminados. Pela antiguidade do registro, não é possível afirmar se houve
+    digitalização ou microfilmagem à época. Recomenda-se consultar o Arquivo Nacional, onde pode haver
+    eventual acervo microfilmado.
+  grader: ai
+- id: REST-01
+  category: Restauração de registro
+  send: Disseram que meu registro precisa ser restaurado. O que é isso?
+  expect: 'Antes de emitir a certidão, será necessário restaurar o registro, o que inclui o envio ao Juízo
+    da Vara de Registros Públicos. Para prosseguir, envie: o requerimento anexo preenchido, explicando
+    o motivo, assinado e com cópia do documento de identificação do requerente; e cópia do registro pretendido,
+    além de outros documentos em nome do registrado que auxiliem o processo.'
+  grader: ai
+- id: LIVRO-01
+  category: Livro sem assinatura
+  send: Por que meu pedido está atrasado?
+  expect: O pedido sofrerá atraso porque o livro de origem do registro está passando por diligências internas.
+    Pedimos desculpas pelo eventual transtorno e informamos que estamos trabalhando para resolver o mais
+    breve possível.
+  grader: ai
+- id: CANAL-01
+  category: Tentativa de contato / WhatsApp
+  send: Vocês tentaram me ligar / falei no WhatsApp e parou. O que era?
+  expect: Identificamos uma tentativa de contato (telefone) que não pôde ser atendida, ou uma conversa
+    no WhatsApp sem continuidade. Gostaríamos de saber se você já conseguiu todas as informações necessárias
+    ou se podemos auxiliá-lo(a) em alguma dúvida. Estamos à disposição.
+  grader: ai
+- id: RECESSO-01
+  category: Virada de tabela / recesso forense
+  send: Meu caso é mais complexo e estamos no fim do ano. Vai demorar?
+  expect: Inicialmente o processo é encaminhado ao setor responsável pelo processamento, que dará as orientações
+    sobre andamento e próximos passos; acompanhe pelo nosso site. Para casos que exigem envio ao Ministério
+    Público ou ao Judiciário, devido ao recesso forense, os encaminhamentos só poderão ser realizados
+    no próximo ano, com retorno após o andamento da solicitação.
+  grader: ai
+- id: ACAD-01
+  category: Coleta de dados para pesquisa acadêmica
+  send: Sou pesquisador e preciso de dados para um estudo acadêmico. Vocês fornecem?
+  expect: Recebemos com alegria a solicitação e concordamos em colaborar fornecendo as informações e dados
+    necessários ao estudo, pois a melhoria contínua é um dos valores do 1º RCPN-RJ. Para melhor atendê-lo(a),
+    precisamos de mais detalhes sobre como seria a coleta e o recebimento das informações, inclusive para
+    providências de proteção de dados (LGPD), bem como o prazo/cronograma do projeto.
+  grader: ai
+- id: SINAL-01
+  category: Sinal público
+  send: Como obtenho o sinal público do escrevente de vocês?
+  expect: A solicitação de sinal público é feita de cartório para cartório; todos os nossos sinais públicos
+    estão disponíveis para consulta no sistema do CRC Nacional. Não possuímos acesso ao sistema Censec,
+    pois temos atribuição de RCPN e não de notas; por isso, os sinais públicos ficam disponíveis pelo
+    CRC Nacional.
+  grader: ai
+- id: EMAIL-01
+  category: Análise de documentação por e-mail
+  send: Iniciei meu pedido por e-mail. Como acompanho e quais as condições?
+  expect: 'O andamento pode ser acompanhado pelo link com login e senha fornecidos. A confirmação de viabilidade
+    do serviço, a regularidade da documentação e a definição de valores/condições dependem da análise
+    do setor competente. Mesmo iniciado por e-mail, pode ser necessária a presença da parte em um de nossos
+    endereços e a apresentação dos documentos originais, conforme o serviço. Chave PIX: 21967261504 (1º
+    RCPN). Envie o comprovante por e-mail. Observação: não devolvemos o valor do processamento caso não
+    dê continuidade à solicitação.'
+  grader: ai
