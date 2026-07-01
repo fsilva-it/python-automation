@@ -1,0 +1,46 @@
+# Checklist de exemplo - assistente de WhatsApp.
+#
+# Cada item e um caso de teste:
+#   id              identificador unico do caso
+#   send            mensagem que o harness envia ao bot
+#   category        (opcional) agrupamento no relatorio
+#   expect_keywords (opcional) palavras/expressoes que devem aparecer na resposta
+#   expect          (opcional) criterio em linguagem natural (avaliado por IA)
+#   expect_exact    (opcional) resposta exata esperada
+#   grader          (opcional) forca a estrategia deste caso: keyword|exact|ai
+#
+# Defina pelo menos um criterio por caso. No avaliador "hybrid" (padrao), o
+# harness usa o criterio mais especifico e recorre a IA quando ha 'expect'.
+
+- id: saudacao
+  category: atendimento
+  send: "Oi, bom dia"
+  expect_keywords: ["ola", "ajudar"]
+
+- id: abrir_chamado
+  category: chamados
+  send: "Preciso abrir um chamado"
+  expect_keywords: ["chamado"]
+  expect: "O bot deve orientar como abrir um chamado ou pedir o assunto/categoria."
+
+- id: horario_atendimento
+  category: informacoes
+  send: "Qual o horario de atendimento?"
+  expect_keywords: ["8h", "18h"]
+
+- id: reset_senha
+  category: autoatendimento
+  send: "Esqueci minha senha, como redefinir?"
+  expect: "O bot deve explicar o caminho para redefinir a senha (portal / 'esqueci minha senha')."
+  grader: ai
+
+- id: falar_com_humano
+  category: escalonamento
+  send: "Quero falar com um atendente"
+  expect_keywords: ["atendente", "humano"]
+
+- id: fora_do_escopo
+  category: robustez
+  send: "Qual a capital da Australia?"
+  expect: "O bot NAO deve responder trivia; deve dizer que nao entendeu ou redirecionar ao suporte."
+  grader: ai
