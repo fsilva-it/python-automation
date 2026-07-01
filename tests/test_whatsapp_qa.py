@@ -141,6 +141,39 @@ class GenericProviderTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             apply_preset(cfg)
 
+    def test_preset_evolution_populates_fields(self):
+        from whatsapp_qa.providers.presets import apply_preset
+        cfg = Config(generic_preset="evolution")
+        apply_preset(cfg)
+        self.assertEqual(cfg.generic_auth_header, "apikey")
+        self.assertEqual(cfg.generic_inbound_text_path, "data.message.conversation")
+        self.assertIn("{{to}}", cfg.generic_body_template)
+
+    def test_env_value_overrides_preset(self):
+        from whatsapp_qa.providers.presets import apply_preset
+        # Campo definido explicitamente (diferente do default) nao e sobrescrito.
+        cfg = Config(generic_preset="evolution", generic_auth_header="X-Custom")
+        apply_preset(cfg)
+        self.assertEqual(cfg.generic_auth_header, "X-Custom")
+
+    def test_preset_gupshup_template_renders_valid_json(self):
+        from whatsapp_qa.providers.generic import render_body
+        from whatsapp_qa.providers.presets import PRESETS
+        out = render_body(PRESETS["gupshup"]["body_template"], "5511999", "ola")
+        self.assertEqual(out["destination"], "5511999")
+        # 'message' e uma string JSON aninhada contendo o texto:
+        self.assertIn("ola", out["message"])
+
+    def test_preset_doc_keys_ignored_by_apply(self):
+        # Chaves de documentacao nao devem virar atributos nem quebrar apply.
+        from whatsapp_qa.providers.presets import apply_preset
+        cfg = Config(generic_preset="zapi")
+        apply_preset(cfg)
+        self.assertFalse(hasattr(cfg, "generic_provider"))
+        self.assertFalse(hasattr(cfg, "generic_send_url_template"))
+        # send_url NAO deve ser preenchida pelo preset (tem placeholders):
+        self.assertEqual(cfg.generic_send_url, "")
+
 
 class WebhookExtractionTests(unittest.TestCase):
     def test_generic_path_extraction(self):

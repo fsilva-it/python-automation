@@ -28,9 +28,10 @@ respostas.
 
 | provider | uso | observacao |
 | --- | --- | --- |
-| `mock`   | desenvolvimento/demonstracao | bot simulado em memoria, sem WhatsApp real, sem credencial, sem custo |
-| `cloud`  | producao (recomendado) | WhatsApp Cloud API oficial da Meta |
-| `twilio` | producao | Twilio API for WhatsApp |
+| `mock`    | desenvolvimento/demonstracao | bot simulado em memoria, sem WhatsApp real, sem credencial, sem custo |
+| `cloud`   | producao (recomendado) | WhatsApp Cloud API oficial da Meta |
+| `twilio`  | producao | Twilio API for WhatsApp |
+| `generic` | producao (gateway proprio) | qualquer gateway/BSP por configuracao: Evolution, Z-API, WPPConnect, 360dialog, Gupshup, Zenvia, ... |
 
 > Bibliotecas nao-oficiais (whatsapp-web.js, Baileys) violam os Termos da Meta e
 > tem risco de banimento do numero. Por isso o harness so traz caminhos oficiais.
@@ -121,6 +122,35 @@ export WAQA_TARGET_NUMBER=5511999999999
 python -m whatsapp_qa run --checklist checklists/meu.yaml
 ```
 
+### 3. Provider generico (gateway/BSP proprio)
+
+Quando o WhatsApp e atendido por um gateway com API/webhook proprios (Evolution
+API, Z-API, WPPConnect, 360dialog, Gupshup, Zenvia, etc.), use o provider
+`generic` — sem escrever codigo. Escolha um preset e informe URL + token:
+
+```bash
+export WAQA_PROVIDER=generic
+export WAQA_GENERIC_PRESET=evolution      # veja 'python -m whatsapp_qa presets'
+export WAQA_GENERIC_SEND_URL="https://SEU-SERVIDOR/message/sendText/SUA-INSTANCIA"
+export WAQA_GENERIC_AUTH_TOKEN="APIKEY-DA-INSTANCIA"
+export WAQA_TARGET_NUMBER=552133861504
+
+python -m whatsapp_qa.webhook --port 8080     # capta as respostas (URL publica)
+python -m whatsapp_qa run --checklist checklists/1rcpn_respostas.yaml --format md
+```
+
+Qualquer campo do preset pode ser sobrescrito por variavel `WAQA_GENERIC_*` (a
+env sempre vence o preset). O texto da resposta e localizado no webhook por um
+caminho pontilhado configuravel (ex.: `data.message.conversation`), com suporte
+a indices e wildcard `[]`. Para descobrir os valores exatos do seu provedor, use
+o roteiro em [../docs/REUNIAO-PROVEDOR.md](../docs/REUNIAO-PROVEDOR.md).
+
+Liste os presets e seus caminhos:
+
+```bash
+python -m whatsapp_qa presets
+```
+
 ## Variaveis de ambiente
 
 | variavel | padrao | descricao |
@@ -137,6 +167,17 @@ python -m whatsapp_qa run --checklist checklists/meu.yaml
 | `WAQA_TWILIO_ACCOUNT_SID` | - | Twilio |
 | `WAQA_TWILIO_AUTH_TOKEN` | - | Twilio |
 | `WAQA_TWILIO_FROM` | - | Twilio (`whatsapp:+...`) |
+| `WAQA_GENERIC_PRESET` | - | preset de gateway (`evolution`, `zapi`, ...) |
+| `WAQA_GENERIC_SEND_URL` | - | URL de envio do gateway |
+| `WAQA_GENERIC_AUTH_TYPE` | `bearer` | `bearer`/`header`/`query`/`basic`/`path`/`none` |
+| `WAQA_GENERIC_AUTH_HEADER` | `Authorization` | nome do header de auth |
+| `WAQA_GENERIC_AUTH_TOKEN` | - | token/api-key |
+| `WAQA_GENERIC_HEADERS` | - | headers estaticos extras (JSON) |
+| `WAQA_GENERIC_BODY_TEMPLATE` | - | corpo JSON com `{{to}}`/`{{body}}` |
+| `WAQA_GENERIC_MSG_ID_PATH` | - | caminho do id na resposta de envio |
+| `WAQA_GENERIC_INBOUND_TEXT_PATH` | - | caminho do texto no webhook |
+| `WAQA_GENERIC_INBOUND_FROM_PATH` | - | caminho do remetente no webhook |
+| `WAQA_GENERIC_INBOUND_FROMME_PATH` | - | caminho da flag fromMe (ignora ecos) |
 | `WAQA_ANTHROPIC_API_KEY` / `ANTHROPIC_API_KEY` | - | grader `ai` |
 | `WAQA_ANTHROPIC_MODEL` | `claude-haiku-4-5-20251001` | modelo do grader `ai` |
 

@@ -65,6 +65,25 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0 if passed == len(outcomes) else 1
 
 
+def cmd_presets(args: argparse.Namespace) -> int:
+    from .providers.presets import PRESETS
+    print("Presets disponiveis para o provider generico:\n")
+    for key, p in sorted(PRESETS.items()):
+        oficial = "oficial Meta" if p.get("official") else "WhatsApp Web (nao oficial)"
+        print(f"  {key}  -  {p.get('provider', '')}  [{oficial}]")
+        print(f"      URL:  {p.get('send_url_template', '')}")
+        print(f"      auth: {p.get('auth_type')} (header: {p.get('auth_header')})  |  "
+              f"content-type: {p.get('content_type')}")
+        print(f"      texto recebido: {p.get('inbound_text_path')}")
+        if p.get("note"):
+            print(f"      nota: {p['note']}")
+        print()
+    print("Uso: WAQA_PROVIDER=generic WAQA_GENERIC_PRESET=<key> "
+          "WAQA_GENERIC_SEND_URL=... WAQA_GENERIC_AUTH_TOKEN=... "
+          "python -m whatsapp_qa run --checklist ...")
+    return 0
+
+
 def cmd_validate(args: argparse.Namespace) -> int:
     try:
         cases = load_checklist(args.checklist)
@@ -83,7 +102,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     run = sub.add_parser("run", help="Executa o checklist contra o WhatsApp.")
     run.add_argument("--checklist", required=True, help="Caminho do arquivo YAML/JSON.")
-    run.add_argument("--provider", choices=["mock", "cloud", "twilio"], help="Sobrescreve WAQA_PROVIDER.")
+    run.add_argument("--provider", choices=["mock", "cloud", "twilio", "generic", "provedor"],
+                     help="Sobrescreve WAQA_PROVIDER.")
     run.add_argument("--target", help="Numero do bot sob teste (E.164). Sobrescreve WAQA_TARGET_NUMBER.")
     run.add_argument("--format", default="console", choices=["console", "json", "md", "markdown"])
     run.add_argument("--out", help="Salva o relatorio em arquivo em vez de stdout.")
@@ -92,6 +112,9 @@ def build_parser() -> argparse.ArgumentParser:
     val = sub.add_parser("validate", help="Valida o formato do checklist sem enviar nada.")
     val.add_argument("--checklist", required=True)
     val.set_defaults(func=cmd_validate)
+
+    pre = sub.add_parser("presets", help="Lista os presets de gateway do provider generico.")
+    pre.set_defaults(func=cmd_presets)
 
     return parser
 
