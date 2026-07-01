@@ -186,6 +186,21 @@ python -m whatsapp_qa presets
 `run` retorna `0` se todos os casos passaram, `1` se algum reprovou e `2` em erro
 de configuracao/checklist - pronto para uso em CI.
 
+## Limitacoes conhecidas
+
+- **Correlacao por tempo:** cada resposta e associada ao caso pela janela de
+  tempo (envia, aguarda, coleta). Se um caso estoura o timeout e a resposta
+  chega atrasada durante o proximo caso, pode ser atribuida ao caso errado. A
+  inbox e limpa no inicio de cada execucao (`--keep-inbox` desativa) para evitar
+  contaminacao entre execucoes; para reduzir o risco intra-execucao, use um
+  `WAQA_REPLY_TIMEOUT` folgado. Correlacao por token/reply-context pode ser
+  adicionada se o gateway expuser o id da mensagem citada.
+- **Preset gupshup:** o campo `message` e um JSON dentro de string; textos com
+  aspas duplas nao sao re-escapados para o nivel interno. Evite aspas nesses
+  casos ou use integracao dedicada.
+- **Execucao real depende do ambiente:** credenciais do gateway e um webhook
+  publico sao fornecidos por quem opera o WhatsApp (ver docs/REUNIAO-PROVEDOR.md).
+
 ## Testes
 
 ```bash
