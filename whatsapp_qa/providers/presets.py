@@ -141,7 +141,10 @@ PRESETS: dict[str, dict] = {
         "inbound_text_path": "payload.payload.text",
         "inbound_from_path": "payload.sender.phone",
         "inbound_fromme_path": "",
-        "note": "Substitua {SOURCE_PHONE} e {APP_NAME} no body_template antes de usar.",
+        "note": "Substitua {SOURCE_PHONE} e {APP_NAME} no body_template antes de usar. "
+                "LIMITACAO: o campo 'message' e um JSON dentro de string; um texto com "
+                "aspas duplas nao e re-escapado para o nivel interno - evite aspas no "
+                "checklist ou use uma integracao dedicada para este gateway.",
     },
     "zenvia": {
         "provider": "Zenvia (BSP oficial)",
@@ -184,11 +187,15 @@ def apply_preset(config) -> None:
     from ..config import Config
 
     defaults = Config()
+    env_provided = getattr(config, "_env_provided", set()) or set()
     for field, value in PRESETS[key].items():
         attr = f"generic_{field}"
         if not hasattr(config, attr):
+            continue  # chaves de documentacao (provider, note, ...) sao ignoradas
+        # A env sempre vence o preset: nao preenche se o campo foi definido por
+        # ambiente OU se ja difere do default (definido explicitamente).
+        if attr in env_provided:
             continue
-        current = getattr(config, attr)
-        # Preenche apenas se ainda estiver no default (nao foi definido por env).
-        if current == getattr(defaults, attr, ""):
-            setattr(config, attr, value)
+        if getattr(config, attr) != getattr(defaults, attr, ""):
+            continue
+        setattr(config, attr, value)

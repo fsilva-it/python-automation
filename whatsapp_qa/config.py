@@ -7,7 +7,25 @@ pelo seu shell). Veja whatsapp_qa/README.md para a lista completa.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+# Mapeia campos generic_* -> variavel de ambiente, para saber quais foram
+# definidos explicitamente (env sempre tem prioridade sobre preset).
+GENERIC_ENV = {
+    "generic_send_url": "WAQA_GENERIC_SEND_URL",
+    "generic_method": "WAQA_GENERIC_METHOD",
+    "generic_content_type": "WAQA_GENERIC_CONTENT_TYPE",
+    "generic_auth_type": "WAQA_GENERIC_AUTH_TYPE",
+    "generic_auth_header": "WAQA_GENERIC_AUTH_HEADER",
+    "generic_auth_query_param": "WAQA_GENERIC_AUTH_QUERY_PARAM",
+    "generic_auth_token": "WAQA_GENERIC_AUTH_TOKEN",
+    "generic_headers_json": "WAQA_GENERIC_HEADERS",
+    "generic_body_template": "WAQA_GENERIC_BODY_TEMPLATE",
+    "generic_msg_id_path": "WAQA_GENERIC_MSG_ID_PATH",
+    "generic_inbound_text_path": "WAQA_GENERIC_INBOUND_TEXT_PATH",
+    "generic_inbound_from_path": "WAQA_GENERIC_INBOUND_FROM_PATH",
+    "generic_inbound_fromme_path": "WAQA_GENERIC_INBOUND_FROMME_PATH",
+}
 
 
 @dataclass
@@ -61,8 +79,15 @@ class Config:
     generic_inbound_from_path: str = ""   # caminho ate o remetente
     generic_inbound_fromme_path: str = ""  # caminho ate flag "enviado por nos" (para ignorar ecos)
 
+    # Segredo para autenticar o POST do webhook (HMAC Meta ou header estatico).
+    webhook_secret: str = ""
+
     # Arquivo onde o receptor de webhook grava as mensagens recebidas (inbox).
     inbox_path: str = "whatsapp_qa_inbox.jsonl"
+
+    # Campos generic_* definidos explicitamente por ambiente (preenchido por
+    # from_env); usado para dar prioridade da env sobre o preset.
+    _env_provided: set = field(default_factory=set, compare=False, repr=False)
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -98,5 +123,7 @@ class Config:
             generic_inbound_text_path=env("WAQA_GENERIC_INBOUND_TEXT_PATH", ""),
             generic_inbound_from_path=env("WAQA_GENERIC_INBOUND_FROM_PATH", ""),
             generic_inbound_fromme_path=env("WAQA_GENERIC_INBOUND_FROMME_PATH", ""),
+            webhook_secret=env("WAQA_WEBHOOK_SECRET", ""),
             inbox_path=env("WAQA_INBOX_PATH", "whatsapp_qa_inbox.jsonl"),
+            _env_provided={f for f, var in GENERIC_ENV.items() if var in os.environ},
         )

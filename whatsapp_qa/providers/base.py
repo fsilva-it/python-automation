@@ -2,9 +2,23 @@
 
 from __future__ import annotations
 
+import re
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
+# Redige segredos que gateways costumam ecoar no corpo de erro (tokens, api-keys,
+# bearer) antes de qualquer texto de erro ser persistido no relatorio.
+_SECRET_RE = re.compile(
+    r"(?i)(bearer\s+\S+|api[-_]?key[\"'=:\s]+\S+|token[\"'=:\s]+\S+|[A-Za-z0-9_\-]{24,})"
+)
+
+
+def safe_error_snippet(text: str | None, limit: int = 200) -> str:
+    """Trecho curto e redigido do corpo de erro, seguro para relatorio/log."""
+    if not text:
+        return ""
+    return _SECRET_RE.sub("[REDACTED]", text[:limit])
 
 
 @dataclass

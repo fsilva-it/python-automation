@@ -17,7 +17,7 @@ aberta (o bot deve ter interagido) ou use templates como mensagem de teste.
 from __future__ import annotations
 
 from ..config import Config
-from .base import InboundMessage, WhatsAppProvider
+from .base import InboundMessage, WhatsAppProvider, safe_error_snippet
 from .inbox import read_since
 
 
@@ -55,7 +55,7 @@ class CloudApiProvider(WhatsAppProvider):
             timeout=30,
         )
         if resp.status_code >= 400:
-            raise RuntimeError(f"Cloud API erro {resp.status_code}: {resp.text}")
+            raise RuntimeError(f"Cloud API erro {resp.status_code}: {safe_error_snippet(resp.text)}")
         data = resp.json()
         try:
             return data["messages"][0]["id"]

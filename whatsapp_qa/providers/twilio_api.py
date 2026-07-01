@@ -14,7 +14,7 @@ Requisitos de ambiente:
 from __future__ import annotations
 
 from ..config import Config
-from .base import InboundMessage, WhatsAppProvider
+from .base import InboundMessage, WhatsAppProvider, safe_error_snippet
 from .inbox import read_since
 
 
@@ -53,7 +53,7 @@ class TwilioProvider(WhatsAppProvider):
             timeout=30,
         )
         if resp.status_code >= 400:
-            raise RuntimeError(f"Twilio erro {resp.status_code}: {resp.text}")
+            raise RuntimeError(f"Twilio erro {resp.status_code}: {safe_error_snippet(resp.text)}")
         return resp.json().get("sid", "sent")
 
     def fetch_since(self, since: float) -> list[InboundMessage]:

@@ -70,8 +70,47 @@ def _resolve(obj: Any, tokens: list[str]) -> Any:
 
 
 def get_path(obj: Any, path: str, default: Any = None) -> Any:
-    """Retorna o valor no caminho, ou `default` se nao existir."""
+    """Retorna o PRIMEIRO valor no caminho, ou `default` se nao existir."""
     if not path:
         return default
     got = _resolve(obj, _tokenize(path))
     return default if got is None else got
+
+
+def _resolve_all(obj: Any, tokens: list[str]) -> list:
+    """Como _resolve, mas o wildcard [] acumula TODOS os itens que resolvem."""
+    if not tokens:
+        return [obj] if obj is not None else []
+    tok, rest = tokens[0], tokens[1:]
+
+    if tok == "[]":
+        out: list = []
+        if isinstance(obj, list):
+            for item in obj:
+                out.extend(_resolve_all(item, rest))
+        return out
+
+    if tok.startswith("[") and tok.endswith("]"):
+        try:
+            i = int(tok[1:-1])
+        except ValueError:
+            return []
+        if isinstance(obj, list) and -len(obj) <= i < len(obj):
+            return _resolve_all(obj[i], rest)
+        return []
+
+    if isinstance(obj, dict) and tok in obj:
+        return _resolve_all(obj[tok], rest)
+    return []
+
+
+def get_path_all(obj: Any, path: str) -> list:
+    """Retorna TODOS os valores que casam o caminho (wildcard [] expande a lista).
+
+    Para caminhos sem wildcard, devolve `[valor]` ou `[]`. Usado para coletar
+    varias mensagens entregues num unico POST de webhook (Meta agrupa em
+    messages[], Zenvia em contents[], etc.), sem descartar as demais.
+    """
+    if not path:
+        return []
+    return _resolve_all(obj, _tokenize(path))

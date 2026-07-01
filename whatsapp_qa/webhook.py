@@ -1,31 +1,56 @@
-"""Receptor de webhook para os providers oficiais (Cloud API e Twilio).
+"""Receptor de webhook para captar as respostas do bot sob teste.
 
-As respostas do bot sob teste chegam aqui (o WhatsApp/Twilio entrega via HTTP) e
-sao gravadas na inbox JSONL que o provider le. Usa apenas a biblioteca padrao.
+As respostas chegam aqui (o gateway/WhatsApp entrega via HTTP) e sao gravadas na
+inbox JSONL que o provider le. Usa apenas a biblioteca padrao.
 
 Uso:
-    python -m whatsapp_qa.webhook --port 8080 [--verify-token SEU_TOKEN]
+    WAQA_VERIFY_TOKEN=... python -m whatsapp_qa.webhook --port 8080
 
-Exponha esta porta publicamente (ex.: ngrok / tunel reverso) e configure a URL
-no painel da Meta (Cloud API) ou no numero da Twilio. Apenas as mensagens
-recebidas DO numero do bot importam para o teste.
+Exponha a porta publicamente (ex.: ngrok) e configure a URL no painel do gateway
+(Cloud API, Twilio ou o gateway proprio). Apenas as mensagens recebidas DO numero
+do bot importam para o teste.
 
-Endpoints:
-    GET  /webhook  - verificacao de assinatura da Cloud API (hub.challenge)
-    POST /webhook  - eventos: Cloud API (JSON) ou Twilio (form-urlencoded)
+Seguranca:
+    - GET  /webhook: verificacao da Cloud API (hub.challenge) exige --verify-token
+      ou WAQA_VERIFY_TOKEN (sem default publico).
+    - POST /webhook: se WAQA_WEBHOOK_SECRET estiver definido, o POST e autenticado
+      por HMAC (X-Hub-Signature-256, padrao Meta) ou por header estatico
+      X-Webhook-Token; caso contrario e rejeitado. Sem segredo definido, o
+      receptor aceita mas AVISA no start (recomendado definir o segredo).
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import hmac
 import json
+import os
+import re
+import sys
 import time
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from .config import Config
 from .providers.inbox import append_inbound
-from .providers.paths import get_path
+from .providers.paths import get_path_all
+
+
+def _is_truthy(v) -> bool:
+    return v in (True, "true", "True", 1, "1")
+
+
+def _digits(s) -> str:
+    return re.sub(r"\D", "", str(s or ""))
+
+
+def _sender_matches(sender, tgt_digits: str) -> bool:
+    """Compara remetente (JID/E.164/puro) com o numero alvo por sufixo de digitos."""
+    d = _digits(sender)
+    if not d or not tgt_digits:
+        return True  # sem dados para comparar -> nao filtra
+    return d.endswith(tgt_digits) or tgt_digits.endswith(d)
 
 
 def _extract_cloud_texts(payload: dict) -> list[str]:
@@ -43,26 +68,68 @@ def _extract_cloud_texts(payload: dict) -> list[str]:
 
 
 def _extract_generic_texts(payload, config: Config) -> list[str]:
-    """Extrai o texto recebido usando os caminhos configurados do provider generico.
+    """Extrai TODOS os textos recebidos pelos caminhos configurados.
 
-    Ignora ecos das nossas proprias mensagens quando a flag fromMe esta marcada.
+    - Coleta multipla via wildcard (varias bolhas num unico POST).
+    - Ignora ecos das proprias mensagens (flag fromMe), pareando por posicao.
+    - Se o remetente e o numero-alvo estao disponiveis, descarta mensagens de
+      outros remetentes (normalizando JID '...@s.whatsapp.net'/'whatsapp:').
     """
-    if config.generic_inbound_fromme_path:
-        from_me = get_path(payload, config.generic_inbound_fromme_path)
-        if from_me in (True, "true", "True", 1, "1"):
-            return []
-    text = get_path(payload, config.generic_inbound_text_path)
-    return [str(text)] if text not in (None, "") else []
+    raw_texts = get_path_all(payload, config.generic_inbound_text_path)
+    if not raw_texts:
+        return []
+    n = len(raw_texts)
+
+    flags = (get_path_all(payload, config.generic_inbound_fromme_path)
+             if config.generic_inbound_fromme_path else [])
+    senders = (get_path_all(payload, config.generic_inbound_from_path)
+               if (config.generic_inbound_from_path and config.target_number) else [])
+    tgt = _digits(config.target_number) if config.target_number else ""
+
+    # Alinha por posicao apenas quando o wildcard produziu a mesma cardinalidade.
+    aligned_flags = flags if len(flags) == n else None
+    aligned_senders = senders if len(senders) == n else None
+
+    out: list[str] = []
+    for i, t in enumerate(raw_texts):
+        if t in (None, ""):
+            continue
+        if aligned_flags is not None and _is_truthy(aligned_flags[i]):
+            continue
+        if aligned_senders is not None and tgt and not _sender_matches(aligned_senders[i], tgt):
+            continue
+        out.append(str(t))
+
+    # Fallbacks para payloads de mensagem unica com listas desalinhadas.
+    if aligned_flags is None and flags and n == 1 and any(_is_truthy(f) for f in flags):
+        return []
+    if aligned_senders is None and senders and tgt and not any(_sender_matches(s, tgt) for s in senders):
+        return []
+    return out
 
 
 def extract_texts(payload, config: Config, content_type: str) -> list[str]:
     """Decide como extrair o(s) texto(s) recebido(s) conforme o provider/config."""
-    # Provider generico com caminho configurado tem prioridade.
-    if config.generic_inbound_text_path:
+    if config.generic_inbound_text_path:  # provider generico configurado tem prioridade
         return _extract_generic_texts(payload, config)
     if isinstance(payload, dict) and "entry" in payload:
         return _extract_cloud_texts(payload)
     return []
+
+
+def authenticate_post(config: Config, headers, raw: bytes) -> bool:
+    """Autentica o POST do webhook quando WAQA_WEBHOOK_SECRET esta definido."""
+    secret = config.webhook_secret
+    if not secret:
+        return True  # sem segredo configurado (aceita; avisado no start)
+    sig = headers.get("X-Hub-Signature-256", "")
+    if sig.startswith("sha256="):
+        expected = "sha256=" + hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(sig, expected)
+    token = headers.get("X-Webhook-Token", "")
+    if token:
+        return hmac.compare_digest(token, secret)
+    return False
 
 
 def make_handler(config: Config, verify_token: str):
@@ -83,7 +150,7 @@ def make_handler(config: Config, verify_token: str):
             mode = qs.get("hub.mode", [""])[0]
             token = qs.get("hub.verify_token", [""])[0]
             challenge = qs.get("hub.challenge", [""])[0]
-            if mode == "subscribe" and token == verify_token:
+            if mode == "subscribe" and hmac.compare_digest(token, verify_token):
                 self._ok(200, challenge.encode("utf-8"))
             else:
                 self._ok(403, b"forbidden")
@@ -91,16 +158,20 @@ def make_handler(config: Config, verify_token: str):
         def do_POST(self):
             length = int(self.headers.get("Content-Length", 0) or 0)
             raw = self.rfile.read(length) if length else b""
+
+            if not authenticate_post(config, self.headers, raw):
+                self._ok(403, b"forbidden")
+                return
+
             ctype = self.headers.get("Content-Type", "")
             texts: list[str] = []
-
             if "application/json" in ctype:
                 try:
                     payload = json.loads(raw.decode("utf-8"))
                     texts = extract_texts(payload, config, ctype)
                 except (json.JSONDecodeError, UnicodeDecodeError):
                     texts = []
-            else:  # Twilio (ou gateway) envia form-urlencoded com o campo Body
+            else:  # Twilio (ou gateway) form-urlencoded com o campo Body
                 form = urllib.parse.parse_qs(raw.decode("utf-8", errors="replace"))
                 body = form.get("Body", [""])[0]
                 if body:
@@ -118,11 +189,21 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Receptor de webhook do harness de WhatsApp.")
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--verify-token", default="waqa-verify")
+    parser.add_argument("--verify-token", default="", help="Token de verificacao (ou WAQA_VERIFY_TOKEN).")
     args = parser.parse_args(argv)
 
+    verify_token = args.verify_token or os.environ.get("WAQA_VERIFY_TOKEN", "")
+    if not verify_token:
+        print("Erro: defina --verify-token ou WAQA_VERIFY_TOKEN (sem default publico).",
+              file=sys.stderr)
+        return 2
+
     config = Config.from_env()
-    handler = make_handler(config, args.verify_token)
+    if not config.webhook_secret:
+        print("AVISO: WAQA_WEBHOOK_SECRET nao definido - o POST /webhook NAO sera autenticado. "
+              "Defina um segredo para producao.", file=sys.stderr)
+
+    handler = make_handler(config, verify_token)
     server = HTTPServer((args.host, args.port), handler)
     print(f"Webhook ouvindo em http://{args.host}:{args.port}/webhook "
           f"(inbox: {config.inbox_path})")

@@ -37,6 +37,14 @@ def cmd_run(args: argparse.Namespace) -> int:
         print("Erro: defina WAQA_TARGET_NUMBER (ou --target) para providers reais.", file=sys.stderr)
         return 2
 
+    # Comeca a execucao com uma inbox limpa (evita respostas de execucoes
+    # anteriores contaminarem esta). Nao se aplica ao mock (inbox em memoria).
+    if config.provider != "mock" and not args.keep_inbox:
+        try:
+            open(config.inbox_path, "w", encoding="utf-8").close()
+        except OSError as exc:
+            print(f"Aviso: nao foi possivel limpar a inbox {config.inbox_path}: {exc}", file=sys.stderr)
+
     try:
         cases = load_checklist(args.checklist)
     except ChecklistError as exc:
@@ -107,6 +115,8 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--target", help="Numero do bot sob teste (E.164). Sobrescreve WAQA_TARGET_NUMBER.")
     run.add_argument("--format", default="console", choices=["console", "json", "md", "markdown"])
     run.add_argument("--out", help="Salva o relatorio em arquivo em vez de stdout.")
+    run.add_argument("--keep-inbox", action="store_true",
+                     help="Nao limpa a inbox no inicio (padrao: limpa para evitar contaminacao).")
     run.set_defaults(func=cmd_run)
 
     val = sub.add_parser("validate", help="Valida o formato do checklist sem enviar nada.")

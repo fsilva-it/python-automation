@@ -201,6 +201,88 @@ class WebhookExtractionTests(unittest.TestCase):
         self.assertEqual(extract_texts(payload, cfg, "application/json"), ["oi cloud"])
 
 
+class PathAllTests(unittest.TestCase):
+    def test_get_path_all_collects_wildcard(self):
+        from whatsapp_qa.providers.paths import get_path_all
+        payload = {"m": [{"t": "a"}, {"t": "b"}, {"x": 1}]}
+        self.assertEqual(get_path_all(payload, "m[].t"), ["a", "b"])
+
+    def test_get_path_all_scalar(self):
+        from whatsapp_qa.providers.paths import get_path_all
+        self.assertEqual(get_path_all({"a": {"b": 3}}, "a.b"), [3])
+        self.assertEqual(get_path_all({}, "a.b"), [])
+
+
+class WebhookHardeningTests(unittest.TestCase):
+    def test_multi_bubble_generic_extraction(self):
+        from whatsapp_qa.webhook import extract_texts
+        cfg = Config(generic_inbound_text_path="entry[].changes[].value.messages[].text.body")
+        payload = {"entry": [{"changes": [{"value": {"messages": [
+            {"text": {"body": "bolha 1"}}, {"text": {"body": "bolha 2"}}]}}]}]}
+        self.assertEqual(extract_texts(payload, cfg, "application/json"), ["bolha 1", "bolha 2"])
+
+    def test_fromme_pairwise_in_batch(self):
+        from whatsapp_qa.webhook import extract_texts
+        cfg = Config(generic_inbound_text_path="messages[].body",
+                     generic_inbound_fromme_path="messages[].fromMe")
+        payload = {"messages": [{"fromMe": True, "body": "eco"}, {"fromMe": False, "body": "real"}]}
+        self.assertEqual(extract_texts(payload, cfg, "application/json"), ["real"])
+
+    def test_sender_filter_normalizes_jid(self):
+        from whatsapp_qa.webhook import extract_texts
+        cfg = Config(generic_inbound_text_path="messages[].body",
+                     generic_inbound_from_path="messages[].from",
+                     target_number="5511999")
+        payload = {"messages": [
+            {"from": "5511999@s.whatsapp.net", "body": "do bot"},
+            {"from": "5522888@s.whatsapp.net", "body": "de outro"}]}
+        self.assertEqual(extract_texts(payload, cfg, "application/json"), ["do bot"])
+
+    def test_authenticate_post_hmac_and_token(self):
+        import hashlib
+        import hmac as _hmac
+        from whatsapp_qa.webhook import authenticate_post
+        cfg = Config(webhook_secret="s3cr3t")
+        raw = b'{"a":1}'
+        good = "sha256=" + _hmac.new(b"s3cr3t", raw, hashlib.sha256).hexdigest()
+        self.assertTrue(authenticate_post(cfg, {"X-Hub-Signature-256": good}, raw))
+        self.assertFalse(authenticate_post(cfg, {"X-Hub-Signature-256": "sha256=deadbeef"}, raw))
+        self.assertTrue(authenticate_post(cfg, {"X-Webhook-Token": "s3cr3t"}, raw))
+        self.assertFalse(authenticate_post(cfg, {}, raw))
+        # sem segredo configurado: aceita
+        self.assertTrue(authenticate_post(Config(), {}, raw))
+
+
+class SecurityHardeningTests(unittest.TestCase):
+    def test_safe_error_snippet_redacts(self):
+        from whatsapp_qa.providers.base import safe_error_snippet
+        out = safe_error_snippet('erro: token=abcDEF1234567890abcDEF1234 Bearer xyz')
+        self.assertNotIn("abcDEF1234567890abcDEF1234", out)
+        self.assertIn("[REDACTED]", out)
+
+    def test_placeholder_preflight_rejects_gupshup(self):
+        from whatsapp_qa.providers.generic import GenericProvider
+        cfg = Config(provider="generic", generic_preset="gupshup",
+                     generic_send_url="https://api.gupshup.io/wa/api/v1/msg",
+                     generic_auth_token="k")
+        with self.assertRaises(ValueError) as ctx:
+            GenericProvider(cfg)
+        self.assertIn("SOURCE_PHONE", str(ctx.exception))
+
+    def test_env_provided_beats_preset_even_at_default(self):
+        # env define o header IGUAL ao default; o preset nao pode sobrescrever.
+        import os
+        from whatsapp_qa.providers.presets import apply_preset
+        os.environ["WAQA_GENERIC_AUTH_HEADER"] = "Authorization"  # == default
+        try:
+            cfg = Config.from_env()
+            cfg.generic_preset = "evolution"  # preset quer 'apikey'
+            apply_preset(cfg)
+            self.assertEqual(cfg.generic_auth_header, "Authorization")
+        finally:
+            del os.environ["WAQA_GENERIC_AUTH_HEADER"]
+
+
 class EndToEndMockTests(unittest.TestCase):
     def test_full_run_against_mock_bot(self):
         cfg = Config(provider="mock", grader="keyword", target_number="123",

@@ -12,12 +12,17 @@ aqui; o texto e localizado por um caminho pontilhado configuravel.
 from __future__ import annotations
 
 import json
+import re
 
 from ..config import Config
-from .base import InboundMessage, WhatsAppProvider
+from .base import InboundMessage, WhatsAppProvider, safe_error_snippet
 from .inbox import read_since
 from .paths import get_path
 from .presets import apply_preset
+
+# Placeholder de configuracao (MAIUSCULAS) que o operador precisa substituir,
+# ex.: {FROM_NUMBER}, {SOURCE_PHONE}. Distinto de {{to}}/{{body}} (minusculas).
+_UNRESOLVED_PLACEHOLDER = re.compile(r"\{[A-Z][A-Z0-9_]+\}")
 
 
 def render_body(template: str, to: str, body: str) -> dict:
@@ -53,6 +58,18 @@ class GenericProvider(WhatsAppProvider):
             raise ValueError("Provider generico requer WAQA_GENERIC_SEND_URL (ou um preset que a defina).")
         if not config.generic_body_template:
             raise ValueError("Provider generico requer WAQA_GENERIC_BODY_TEMPLATE (ou um preset que a defina).")
+
+        # Preflight: placeholders de configuracao nao substituidos (ex.: {FROM_NUMBER}
+        # nos presets twilio/gupshup/zenvia) causariam envio de lixo literal ao gateway.
+        leftovers = sorted(set(
+            _UNRESOLVED_PLACEHOLDER.findall(config.generic_body_template)
+            + _UNRESOLVED_PLACEHOLDER.findall(config.generic_send_url)
+        ))
+        if leftovers:
+            raise ValueError(
+                f"Placeholders nao substituidos: {leftovers}. Preencha-os em "
+                "WAQA_GENERIC_BODY_TEMPLATE / WAQA_GENERIC_SEND_URL antes de rodar."
+            )
 
         try:
             import requests  # type: ignore
@@ -103,7 +120,7 @@ class GenericProvider(WhatsAppProvider):
 
         resp = self._requests.request(cfg.generic_method or "POST", cfg.generic_send_url, **kwargs)
         if resp.status_code >= 400:
-            raise RuntimeError(f"Gateway erro {resp.status_code}: {resp.text}")
+            raise RuntimeError(f"Gateway erro {resp.status_code}: {safe_error_snippet(resp.text)}")
 
         if cfg.generic_msg_id_path:
             try:
