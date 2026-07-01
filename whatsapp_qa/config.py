@@ -43,6 +43,24 @@ class Config:
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-haiku-4-5-20251001"
 
+    # --- Provider generico (gateway/BSP proprio, ex: Evolution, Z-API, 360dialog) ---
+    # Preset opcional que preenche defaults conhecidos (ver providers/presets.py).
+    generic_preset: str = ""
+    generic_send_url: str = ""
+    generic_method: str = "POST"
+    generic_content_type: str = "json"  # "json" ou "form"
+    generic_auth_type: str = "bearer"   # bearer | header | query | basic | none
+    generic_auth_header: str = "Authorization"
+    generic_auth_query_param: str = "token"
+    generic_auth_token: str = ""
+    generic_headers_json: str = ""      # headers estaticos extras, como JSON
+    generic_body_template: str = ""     # JSON de envio com {{to}} e {{body}}
+    generic_msg_id_path: str = ""       # caminho ate o id na resposta de envio
+    # Webhook (mensagens recebidas):
+    generic_inbound_text_path: str = ""   # caminho ate o texto recebido
+    generic_inbound_from_path: str = ""   # caminho ate o remetente
+    generic_inbound_fromme_path: str = ""  # caminho ate flag "enviado por nos" (para ignorar ecos)
+
     # Arquivo onde o receptor de webhook grava as mensagens recebidas (inbox).
     inbox_path: str = "whatsapp_qa_inbox.jsonl"
 
@@ -66,5 +84,19 @@ class Config:
             # Reaproveita ANTHROPIC_API_KEY se ja existir no ambiente.
             anthropic_api_key=env("WAQA_ANTHROPIC_API_KEY", env("ANTHROPIC_API_KEY", "")),
             anthropic_model=env("WAQA_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
+            generic_preset=env("WAQA_GENERIC_PRESET", ""),
+            generic_send_url=env("WAQA_GENERIC_SEND_URL", ""),
+            generic_method=env("WAQA_GENERIC_METHOD", "POST"),
+            generic_content_type=env("WAQA_GENERIC_CONTENT_TYPE", "json"),
+            generic_auth_type=env("WAQA_GENERIC_AUTH_TYPE", "bearer"),
+            generic_auth_header=env("WAQA_GENERIC_AUTH_HEADER", "Authorization"),
+            generic_auth_query_param=env("WAQA_GENERIC_AUTH_QUERY_PARAM", "token"),
+            generic_auth_token=env("WAQA_GENERIC_AUTH_TOKEN", ""),
+            generic_headers_json=env("WAQA_GENERIC_HEADERS", ""),
+            generic_body_template=env("WAQA_GENERIC_BODY_TEMPLATE", ""),
+            generic_msg_id_path=env("WAQA_GENERIC_MSG_ID_PATH", ""),
+            generic_inbound_text_path=env("WAQA_GENERIC_INBOUND_TEXT_PATH", ""),
+            generic_inbound_from_path=env("WAQA_GENERIC_INBOUND_FROM_PATH", ""),
+            generic_inbound_fromme_path=env("WAQA_GENERIC_INBOUND_FROMME_PATH", ""),
             inbox_path=env("WAQA_INBOX_PATH", "whatsapp_qa_inbox.jsonl"),
         )

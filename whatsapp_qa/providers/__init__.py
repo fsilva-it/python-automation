@@ -25,8 +25,12 @@ def build_provider(config: Config) -> WhatsAppProvider:
         from .twilio_api import TwilioProvider
 
         return TwilioProvider(config)
+    if name in ("generic", "provedor", "gateway"):
+        from .generic import GenericProvider
+
+        return GenericProvider(config)
     raise ValueError(
-        f"Provider desconhecido: {name!r}. Use 'mock', 'cloud' ou 'twilio'."
+        f"Provider desconhecido: {name!r}. Use 'mock', 'cloud', 'twilio' ou 'generic'."
     )
 
 

@@ -25,6 +25,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from .config import Config
 from .providers.inbox import append_inbound
+from .providers.paths import get_path
 
 
 def _extract_cloud_texts(payload: dict) -> list[str]:
@@ -39,6 +40,29 @@ def _extract_cloud_texts(payload: dict) -> list[str]:
                     if body:
                         texts.append(body)
     return texts
+
+
+def _extract_generic_texts(payload, config: Config) -> list[str]:
+    """Extrai o texto recebido usando os caminhos configurados do provider generico.
+
+    Ignora ecos das nossas proprias mensagens quando a flag fromMe esta marcada.
+    """
+    if config.generic_inbound_fromme_path:
+        from_me = get_path(payload, config.generic_inbound_fromme_path)
+        if from_me in (True, "true", "True", 1, "1"):
+            return []
+    text = get_path(payload, config.generic_inbound_text_path)
+    return [str(text)] if text not in (None, "") else []
+
+
+def extract_texts(payload, config: Config, content_type: str) -> list[str]:
+    """Decide como extrair o(s) texto(s) recebido(s) conforme o provider/config."""
+    # Provider generico com caminho configurado tem prioridade.
+    if config.generic_inbound_text_path:
+        return _extract_generic_texts(payload, config)
+    if isinstance(payload, dict) and "entry" in payload:
+        return _extract_cloud_texts(payload)
+    return []
 
 
 def make_handler(config: Config, verify_token: str):
@@ -72,10 +96,11 @@ def make_handler(config: Config, verify_token: str):
 
             if "application/json" in ctype:
                 try:
-                    texts = _extract_cloud_texts(json.loads(raw.decode("utf-8")))
+                    payload = json.loads(raw.decode("utf-8"))
+                    texts = extract_texts(payload, config, ctype)
                 except (json.JSONDecodeError, UnicodeDecodeError):
                     texts = []
-            else:  # Twilio envia form-urlencoded com o campo Body
+            else:  # Twilio (ou gateway) envia form-urlencoded com o campo Body
                 form = urllib.parse.parse_qs(raw.decode("utf-8", errors="replace"))
                 body = form.get("Body", [""])[0]
                 if body:
